@@ -28,14 +28,44 @@
           <!-- small box -->
           <div class="small-box bg-info">
             <div class="inner">
-              <h3>150</h3>
+              <h3>{{  $sum_customer }}</h3>
 
-              <p>New Orders</p>
+              <p>Customer</p>
             </div>
             <div class="icon">
-              <i class="ion ion-bag"></i>
+              <i class="ion ion-ios-people-outline"></i>
             </div>
-            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            <a href="/customer" class="small-box-footer">Info Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-3 col-6">
+          <!-- small box -->
+          <div class="small-box bg-info">
+            <div class="inner">
+              <h3>{{ $sum_supplier }}</h3>
+
+              <p>Supplier</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-person"></i>
+            </div>
+            <a href="/supplier" class="small-box-footer">Info Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-3 col-6">
+          <!-- small box -->
+          <div class="small-box bg-info">
+            <div class="inner">
+              <h3>{{ $sum_barang }}</h3>
+
+              <p>Jumlah Barang</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-cube"></i>
+            </div>
+            <a href="/barang" class="small-box-footer">Info Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
           </div>
         </div>
         <!-- ./col -->
@@ -43,47 +73,22 @@
           <!-- small box -->
           <div class="small-box bg-success">
             <div class="inner">
-              <h3>53<sup style="font-size: 20px">%</sup></h3>
+              <h3>
+                @if ($total_transaksi->tb === null)
+                    Rp. 0
+                @else
+                    Rp.{{ number_format($total_transaksi->tb,2,',','.') }}
+                @endif
+              </h3>
 
-              <p>Bounce Rate</p>
+              <p>Total Transaksi</p>
             </div>
             <div class="icon">
-              <i class="ion ion-stats-bars"></i>
+              <i class="ion ion-cash"></i>
             </div>
-            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            <a href="/transaksi" class="small-box-footer">Info Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
           </div>
         </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-6">
-          <!-- small box -->
-          <div class="small-box bg-warning">
-            <div class="inner">
-              <h3>44</h3>
-
-              <p>User Registrations</p>
-            </div>
-            <div class="icon">
-              <i class="ion ion-person-add"></i>
-            </div>
-            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-6">
-          <!-- small box -->
-          <div class="small-box bg-danger">
-            <div class="inner">
-              <h3>65</h3>
-
-              <p>Unique Visitors</p>
-            </div>
-            <div class="icon">
-              <i class="ion ion-pie-graph"></i>
-            </div>
-            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-        <!-- ./col -->
       </div>
   </section>
 
@@ -93,59 +98,37 @@
       <div class="col-lg-12">
           <div class="card">
               <div class="card-header">
-                  <h3>Sample Table</h3>
+                  <h3>History Transaksi</h3>
               </div>
               <div class="card-body">
-              <table class="table table-bordered">
+              <table id="example" class="table table-bordered">
                 <thead>
                   <tr>
-                    <th style="width: 10px">#</th>
-                    <th>Task</th>
-                    <th>Progress</th>
-                    <th style="width: 40px">Label</th>
+                    <th>No</th>
+                    <th>Customer</th>
+                    <th>Barang</th>
+                    <th>Harga Barang</th>
+                    <th>Kuantitas Pembelian</th>
+                    <th>Total Harga</th>
+                    <th>Tanggal Bayar</th>
+                    <th>Petugas</th>
+                    <th>Catatan</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>1.</td>
-                    <td>Update software</td>
-                    <td>
-                      <div class="progress progress-xs">
-                        <div class="progress-bar progress-bar-danger" style="width: 55%"></div>
-                      </div>
-                    </td>
-                    <td><span class="badge bg-danger">55%</span></td>
-                  </tr>
-                  <tr>
-                    <td>2.</td>
-                    <td>Clean database</td>
-                    <td>
-                      <div class="progress progress-xs">
-                        <div class="progress-bar bg-warning" style="width: 70%"></div>
-                      </div>
-                    </td>
-                    <td><span class="badge bg-warning">70%</span></td>
-                  </tr>
-                  <tr>
-                    <td>3.</td>
-                    <td>Cron job running</td>
-                    <td>
-                      <div class="progress progress-xs progress-striped active">
-                        <div class="progress-bar bg-primary" style="width: 30%"></div>
-                      </div>
-                    </td>
-                    <td><span class="badge bg-primary">30%</span></td>
-                  </tr>
-                  <tr>
-                    <td>4.</td>
-                    <td>Fix and squish bugs</td>
-                    <td>
-                      <div class="progress progress-xs progress-striped active">
-                        <div class="progress-bar bg-success" style="width: 90%"></div>
-                      </div>
-                    </td>
-                    <td><span class="badge bg-success">90%</span></td>
-                  </tr>
+                  @foreach ($history as $h)
+                      <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $h->id_customer }} | {{ $h->Customer->nama }}</td>
+                        <td>{{ $h->nama_barang }} | {{ $h->Barang->Supplier->nama_perusahaan }}</td>
+                        <td>{{ $h->Barang->harga }}</td>
+                        <td>{{ $h->kuantitas }}</td>
+                        <td>{{ $h->total_harga }}</td>
+                        <td>{{ $h->tanggal_bayar }}</td>
+                        <td>{{ $h->Petugas->nama }}</td>
+                        <td>{{ $h->catatan }}</td>
+                      </tr>
+                  @endforeach
                 </tbody>
               </table>
               </div>

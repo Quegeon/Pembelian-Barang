@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\SupplierController;
@@ -18,9 +19,7 @@ use App\Http\Controllers\TransaksiController;
 |
 */
 
-Route::get('/', function () {
-    return view('dashboard');
-});
+Route::get('/dashboard', [DashboardController::class, 'index']);
 
 Route::get('/petugas', [UserController::class, 'index']);
 Route::get('/petugas/create', [UserController::class, 'create']);
