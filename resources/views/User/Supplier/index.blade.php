@@ -18,7 +18,7 @@
                                 <a href="/supplier/create" class="btn btn-primary">Tambah Data</a>
                             </div>
                             <div class="card-body">
-                                <table class="table table-striped table-hover table-bordered">
+                                <table id="example" class="table table-striped table-hover table-bordered">
                                     <thead>
                                         <tr>
                                             <th>No</th>
