@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\SupplierController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,3 +37,12 @@ Route::post('/customer/{id}/update', [CustomerController::class, 'update']);
 Route::get('/customer/{id}/destroy', [CustomerController::class, 'destroy']);
 Route::get('/customer/{id}/show/password', [CustomerController::class, 'show_password']);
 Route::post('/customer/{id}/change_password', [CustomerController::class, 'change_password']);
+
+Route::get('/supplier', [SupplierController::class, 'index']);
+Route::get('/supplier/create', [SupplierController::class, 'create']);
+Route::post('/supplier/store', [SupplierController::class, 'store']);
+Route::get('/supplier/{id}/show', [SupplierController::class, 'show']);
+Route::post('/supplier/{id}/update', [SupplierController::class, 'update']);
+Route::get('/supplier/{id}/destroy', [SupplierController::class, 'destroy']);
+Route::get('/supplier/{id}/show/password', [SupplierController::class, 'show_password']);
+Route::post('/supplier/{id}/change_password', [SupplierController::class, 'change_password']);
