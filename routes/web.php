@@ -61,3 +61,5 @@ Route::post('/transaksi/store', [TransaksiController::class, 'store']);
 Route::get('/transaksi/{id}/show', [TransaksiController::class, 'show']);
 Route::post('/transaksi/{id}/update', [TransaksiController::class, 'update']);
 Route::get('/transaksi/{id}/destroy', [TransaksiController::class, 'destroy']);
+Route::get('/transaksi/print', [TransaksiController::class, 'print']);
+Route::get('/transaksi/{id}/receipt', [TransaksiController::class, 'receipt']);

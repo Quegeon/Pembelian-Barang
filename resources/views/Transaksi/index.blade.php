@@ -16,6 +16,7 @@
                             <div class="card-header">
                                 <h3>Kelola Data Transaksi</h3>
                                 <a href="/transaksi/create" class="btn btn-primary">Tambah Data</a>
+                                <a href="/transaksi/print" class="btn btn-secondary">Print</a>
                             </div>
                             <div class="card-body">
                                 <table id="example" class="table table-stripped table-bordered table-hover">
@@ -47,6 +48,7 @@
                                                 <td>{{ $t->catatan }}</td>
                                                 <td>
                                                     <a href="/transaksi/{{ $t->id }}/show" class="btn btn-warning">Edit</a>
+                                                    <a href="/transaksi/{{ $t->id }}/receipt" class="btn btn-success">Receipt</a>
                                                     <a href="/transaksi/{{ $t->id }}/destroy" class="btn btn-danger" onclick="return confirm('Konfirmasi Hapus Data')">Hapus</a>
                                                 </td>
                                             </tr>

@@ -232,4 +232,38 @@ class TransaksiController extends Controller
             }
         }
     }
+
+    public function print ()
+    {
+        $transaksi = Transaksi::all();
+        $tahun = Carbon::today()->year;
+        $bulan = Carbon::today()->monthName;
+
+        if ($transaksi === null) {
+            return redirect('/transaksi')
+                        ->with('status',[
+                            'type' => 'danger',
+                            'message' => 'Record is empty'
+                        ]);
+
+        } else {
+            return view('Transaksi.print', compact(['transaksi','tahun','bulan']));
+        }
+    }
+
+    public function receipt ($id)
+    {
+        $transaksi = Transaksi::find($id);
+
+        if ($transaksi === null) {
+            return redirect('/transaksi')
+                        ->with('status',[
+                            'type' => 'danger',
+                            'message' => 'Invalid Target Data'
+                        ]);
+
+        } else {
+            return view('Transaksi.receipt', compact(['transaksi']));
+        }
+    }
 }
