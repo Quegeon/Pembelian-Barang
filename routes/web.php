@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\BarangController;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,3 +47,10 @@ Route::post('/supplier/{id}/update', [SupplierController::class, 'update']);
 Route::get('/supplier/{id}/destroy', [SupplierController::class, 'destroy']);
 Route::get('/supplier/{id}/show/password', [SupplierController::class, 'show_password']);
 Route::post('/supplier/{id}/change_password', [SupplierController::class, 'change_password']);
+
+Route::get('/barang', [BarangController::class, 'index']);
+Route::get('/barang/create', [BarangController::class, 'create']);
+Route::post('/barang/store', [BarangController::class, 'store']);
+Route::get('/barang/{id}/show', [BarangController::class, 'show']);
+Route::post('/barang/{id}/update', [BarangController::class, 'update']);
+Route::get('/barang/{id}/destroy', [BarangController::class, 'destroy']);

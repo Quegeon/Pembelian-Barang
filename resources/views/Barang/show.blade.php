@@ -1,0 +1,74 @@
+@extends('layout.master')
+@section('title','Halaman Edit Data Barang')
+@section('content')
+    <div class="content-wrapper">
+        <br>
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Form Edit Data Barang</h3>
+                            </div>
+                            <div class="card-body">
+                                <form action="/barang/{{ $barang->id }}/update" method="post">
+                                    @csrf
+                                    <div class="form-group">
+                                        <label>Nama Barang</label>
+                                        <input class="form-control" name="nama_barang" type="text" placeholder="{{ $barang->nama_barang }}" value="{{ $barang->nama_barang }}">
+                                        @if ($errors->first('nama_barang'))
+                                            <p class="text-danger">* {{ $errors->first('nama_barang') }}</p>
+                                        @endif
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Jenis</label>
+                                        <select name="jenis" class="form-control">
+                                            <option value="{{ $barang->jenis }}">Default: {{ $barang->jenis }}</option>
+                                            <option value="garmen">Garmen</option>
+                                            <option value="konsumsi">Konsumsi</option>
+                                            <option value="material">Material</option>
+                                            <option value="perlengkapan">Perlengkapan</option>
+                                            <option value="lainnya">Lainnya</option>
+                                        </select>
+                                        @if ($errors->first('jenis'))
+                                            <p class="text-danger">* {{ $errors->first('jenis') }}</p>
+                                        @endif
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Stok</label>
+                                        <input class="form-control" name="stok" type="text" placeholder="{{ $barang->stok }}" value="{{ $barang->stok }}">
+                                        @if ($errors->first('stok'))
+                                            <p class="text-danger">* {{ $errors->first('stok') }}</p>
+                                        @endif
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Harga</label>
+                                        <input class="form-control" name="harga" type="text" placeholder="{{ $barang->harga }}" value="{{ $barang->harga }}">
+                                        @if ($errors->first('harga'))
+                                            <p class="text-danger">* {{ $errors->first('harga') }}</p>
+                                        @endif
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Supplier</label>
+                                        <select name="id_supplier" class="form-control">
+                                            <option value="{{ $barang->id_supplier }}">Default: {{ $barang->Supplier->nama }} | {{ $barang->Supplier->nama_perusahaan }}</option>
+                                            @foreach ($supplier as $s)
+                                                <option value="{{ $s->id_supplier }}">{{ $s->nama }} | {{ $s->nama_perusahaan }}</option>                                                
+                                            @endforeach
+                                        </select>
+                                        @if ($errors->first('id_supplier'))
+                                            <p class="text-danger">* {{ $errors->first('id_supplier') }}</p>
+                                        @endif
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Simpan</button>
+                                    <button type="reset" class="btn btn-secondary">Reset</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+@endsection
