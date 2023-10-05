@@ -5,6 +5,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\BarangController;
+use App\Http\Controllers\TransaksiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,3 +55,10 @@ Route::post('/barang/store', [BarangController::class, 'store']);
 Route::get('/barang/{id}/show', [BarangController::class, 'show']);
 Route::post('/barang/{id}/update', [BarangController::class, 'update']);
 Route::get('/barang/{id}/destroy', [BarangController::class, 'destroy']);
+
+Route::get('/transaksi', [TransaksiController::class, 'index']);
+Route::get('/transaksi/create', [TransaksiController::class, 'create']);
+Route::post('/transaksi/store', [TransaksiController::class, 'store']);
+Route::get('/transaksi/{id}/show', [TransaksiController::class, 'show']);
+Route::post('/transaksi/{id}/update', [TransaksiController::class, 'update']);
+Route::get('/transaksi/{id}/destroy', [TransaksiController::class, 'destroy']);

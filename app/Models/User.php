@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Barang;
+use App\Models\Transaksi;
 
 class User extends Authenticatable
 {
@@ -32,5 +33,15 @@ class User extends Authenticatable
     public function Supplier ()
     {
         return $this->hasMany(Barang::class, 'id_supplier', 'id_supplier');
+    }
+
+    public function Customer ()
+    {
+        return $this->hasMany(Barang::class, 'id_customer', 'id_customer');
+    }
+
+    public function Petugas ()
+    {
+        return $this->hasMany(Barang::class, 'id_petugas', 'id');
     }
 }
