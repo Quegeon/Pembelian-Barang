@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SignInController;
+use App\Http\Controllers\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CustomerController;
@@ -18,6 +20,16 @@ use App\Http\Controllers\TransaksiController;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+Route::get('/', [LoginController::class, 'index']);
+Route::post('/postlogin', [LoginController::class, 'postlogin']);
+Route::get('/logout', [LoginController::class, 'logout']);
+
+Route::get('/signin', [SignInController::class, 'index']);
+Route::get('/signin/customer', [SignInController::class, 'create_customer']);
+Route::get('/signin/supplier', [SignInController::class, 'create_supplier']);
+Route::post('/signin/customer/store', [SignInController::class, 'store_customer']);
+Route::post('/signin/supplier/store', [SignInController::class, 'store_supplier']);
 
 Route::get('/dashboard', [DashboardController::class, 'index']);
 
