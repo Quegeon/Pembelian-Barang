@@ -4,7 +4,7 @@
       <!-- Add icons to the links using the .nav-icon class
            with font-awesome or any other icon font library -->
       <li class="nav-item">
-        <a href="#" class="nav-link">
+        <a href="/dashboard" class="nav-link">
           <i class="nav-icon fas fa-home"></i>
           <p>
             Dashboard
@@ -21,15 +21,33 @@
         </a>
         <ul class="nav nav-treeview">
           <li class="nav-item">
-            <a href="pages/tables/simple.html" class="nav-link">
+            <a href="/petugas" class="nav-link">
               <i class="far fa-circle nav-icon"></i>
-              <p>Kelola Data User</p>
+              <p>Kelola Data Petugas</p>
             </a>
           </li>
           <li class="nav-item">
-            <a href="pages/tables/data.html" class="nav-link">
+            <a href="/customer" class="nav-link">
               <i class="far fa-circle nav-icon"></i>
-              <p>Kelola Data</p>
+              <p>Kelola Data Customer</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/supplier" class="nav-link">
+              <i class="far fa-circle nav-icon"></i>
+              <p>Kelola Data Supplier</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/barang" class="nav-link">
+              <i class="far fa-circle nav-icon"></i>
+              <p>Kelola Data Barang</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/transaksi" class="nav-link">
+              <i class="far fa-circle nav-icon"></i>
+              <p>Kelola Data Transaksi</p>
             </a>
           </li>
         </ul>
@@ -50,7 +68,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link">
+            <a href="/logout" class="nav-link">
               <i class="far fa-circle nav-icon"></i>
               <p>Logout</p>
             </a>

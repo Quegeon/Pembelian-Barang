@@ -80,6 +80,7 @@ class TransaksiController extends Controller
                     'total_harga' => $total_harga,
                     'tanggal_bayar' => $tanggal_bayar,
                     'catatan' => $request->catatan,
+                    $request->except(['_token'])
                 ]);
     
                 return redirect('/transaksi')
@@ -183,6 +184,7 @@ class TransaksiController extends Controller
                         'total_harga' => $total_harga,
                         'tanggal_bayar' => $request->tanggal_bayar,
                         'catatan' => $request->catatan,
+                        $request->except(['_token'])
                     ]);
 
                     return redirect('/transaksi')

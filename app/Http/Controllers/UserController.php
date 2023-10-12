@@ -38,6 +38,7 @@ class UserController extends Controller
                 'no_telp' => $request->no_telp,
                 'email' => $request->email,
                 'password' => bcrypt($request->password),
+                $request->except(['_token'])
             ]);
 
             return redirect('/petugas')
@@ -98,6 +99,7 @@ class UserController extends Controller
                     'no_telp' => $request->no_telp,
                     'email' => $request->email,
                     'level' => $request->level,
+                    $request->except(['_token'])
                 ]);
 
                 return redirect('/petugas')
@@ -191,7 +193,8 @@ class UserController extends Controller
             } else {
                 try {
                     $petugas->update([
-                        'password' => bcrypt($request->confirm_password)
+                        'password' => bcrypt($request->confirm_password),
+                        $request->except(['_token'])
                     ]);
 
                     return redirect('/petugas')

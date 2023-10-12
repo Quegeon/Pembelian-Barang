@@ -120,7 +120,7 @@
                       <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $h->id_customer }} | {{ $h->Customer->nama }}</td>
-                        <td>{{ $h->nama_barang }} | {{ $h->Barang->Supplier->nama_perusahaan }}</td>
+                        <td>{{ $h->Barang->nama_barang }} | {{ $h->Barang->Supplier->nama_perusahaan }}</td>
                         <td>{{ $h->Barang->harga }}</td>
                         <td>{{ $h->kuantitas }}</td>
                         <td>{{ $h->total_harga }}</td>

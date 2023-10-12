@@ -42,7 +42,8 @@ class CustomerController extends Controller
                 'email' => $request->email,
                 'password' => bcrypt($request->password),
                 'alamat' => $request->alamat,
-                'level' => 'customer'
+                'level' => 'customer',
+                $request->except(['_token'])
             ]);
 
             return redirect('/customer')
@@ -104,7 +105,8 @@ class CustomerController extends Controller
                     'username' => $request->username,
                     'no_telp' => $request->no_telp,
                     'email' => $request->email,
-                    'alamat' => $request->alamat
+                    'alamat' => $request->alamat,
+                    $request->except(['_token'])
                 ]);
 
                 return redirect('/customer')
@@ -200,7 +202,8 @@ class CustomerController extends Controller
             } else {
                 try {
                     $customer->update([
-                        'password' => bcrypt($request->confirm_password)
+                        'password' => bcrypt($request->confirm_password),
+                        $request->except(['_token'])
                     ]);
     
                     return redirect('/customer')

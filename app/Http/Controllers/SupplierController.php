@@ -45,7 +45,8 @@ class SupplierController extends Controller
                 'no_telp' => $request->no_telp,
                 'email' => $request->email,
                 'alamat' => $request->alamat,
-                'level' => 'supplier'
+                'level' => 'supplier',
+                $request->except(['_token'])
             ]);
 
             return redirect('/supplier')
@@ -107,7 +108,8 @@ class SupplierController extends Controller
                     'nama_perusahaan' => $request->nama_perusahaan,
                     'no_telp' => $request->no_telp,
                     'email' => $request->email,
-                    'alamat' => $request->alamat
+                    'alamat' => $request->alamat,
+                    $request->except(['_token'])
                 ]);
 
                 return redirect('/supplier')
@@ -200,7 +202,8 @@ class SupplierController extends Controller
             } else {
                 try {
                     $supplier->update([
-                        'password' => bcrypt($request->confirm_password)
+                        'password' => bcrypt($request->confirm_password),
+                        $request->except(['_token'])
                     ]);
     
                     return redirect('/supplier')

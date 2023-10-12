@@ -48,6 +48,7 @@ class BarangController extends Controller
                 'jenis' => $request->jenis,
                 'stok' => $request->stok,
                 'harga' => $request->harga,
+                $request->except(['_token'])
             ]);
 
             return redirect('/barang')
@@ -117,6 +118,7 @@ class BarangController extends Controller
                     'jenis' => $request->jenis,
                     'stok' => $request->stok,
                     'harga' => $request->harga,
+                    $request->except(['_token'])
                 ]);
 
                 return redirect('/barang')
