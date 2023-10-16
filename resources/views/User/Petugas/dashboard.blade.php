@@ -1,5 +1,5 @@
 @extends('layout.master')
-@section('title','Dashboard Admin')
+@section('title','Dashboard Petugas')
 @section('content')
 <div class="content-wrapper">
   <!-- Content Header (Page header) -->
@@ -7,10 +7,10 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1 class="m-0">Dashboard Admin</h1>
+          <h1 class="m-0">Dashboard Petugas</h1>
         </div><!-- /.col -->
         <div class="col-sm-6">
-          {{-- something here... --}}
+          {{-- something here ... --}}
         </div><!-- /.col -->
       </div><!-- /.row -->
     </div><!-- /.container-fluid -->
@@ -22,52 +22,6 @@
       <!-- Small boxes (Stat box) -->
       <div class="row">
         <div class="col-lg-3 col-6">
-          <!-- small box -->
-          <div class="small-box bg-info">
-            <div class="inner">
-              <h3>{{  $sum_customer }}</h3>
-
-              <p>Customer</p>
-            </div>
-            <div class="icon">
-              <i class="ion ion-ios-people-outline"></i>
-            </div>
-            <a href="/customer" class="small-box-footer">Info Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-6">
-          <!-- small box -->
-          <div class="small-box bg-info">
-            <div class="inner">
-              <h3>{{ $sum_supplier }}</h3>
-
-              <p>Supplier</p>
-            </div>
-            <div class="icon">
-              <i class="ion ion-person"></i>
-            </div>
-            <a href="/supplier" class="small-box-footer">Info Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-6">
-          <!-- small box -->
-          <div class="small-box bg-info">
-            <div class="inner">
-              <h3>{{ $sum_barang }}</h3>
-
-              <p>Jumlah Barang</p>
-            </div>
-            <div class="icon">
-              <i class="ion ion-cube"></i>
-            </div>
-            <a href="/barang" class="small-box-footer">Info Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-6">
-          <!-- small box -->
           <div class="small-box bg-success">
             <div class="inner">
               <h3>

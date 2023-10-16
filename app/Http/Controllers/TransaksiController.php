@@ -7,35 +7,54 @@ use App\Models\User;
 use App\Models\Transaksi;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
 class TransaksiController extends Controller
 {
     public function index()
     {
-        $transaksi = Transaksi::all();
-        
-        return view('Transaksi.index', compact(['transaksi']));
+        if (Auth::user()->level === 'admin' || Auth::user()->level === 'petugas') {
+            $transaksi = Transaksi::all();
+            
+            return view('Transaksi.index', compact(['transaksi']));
+
+        } else {
+            Auth::logout();
+            return redirect('/')->with('status',[
+                'type' => 'danger',
+                'message' => 'User do not have access'
+            ]);
+        }
     }
 
     public function create()
     {
-        $customer = User::where('level','customer')
-            ->get();
-        $petugas = User::where('level','admin')
-            ->orWhere('level','petugas')
-            ->get();
-        $barang = Barang::all();
-
-        if ($customer->first() === null || $petugas->first() === null || $barang === null) {
-            return redirect('/transaksi')
-                ->with('status',[
-                    'type' => 'danger',
-                    'message' => 'Reference Data is Empty'
-                ]);
+        if (Auth::user()->level === 'admin' || Auth::user()->level === 'petugas') {
+            $customer = User::where('level','customer')
+                ->get();
+            $petugas = User::where('level','admin')
+                ->orWhere('level','petugas')
+                ->get();
+            $barang = Barang::all();
+    
+            if ($customer->first() === null || $petugas->first() === null || $barang === null) {
+                return redirect('/transaksi')
+                    ->with('status',[
+                        'type' => 'danger',
+                        'message' => 'Reference Data is Empty'
+                    ]);
+    
+            } else {
+                return view('Transaksi.create', compact(['customer','petugas','barang']));
+            }
 
         } else {
-            return view('Transaksi.create', compact(['customer','petugas','barang']));
+            Auth::logout();
+            return redirect('/')->with('status',[
+                'type' => 'danger',
+                'message' => 'User do not have access'
+            ]);
         }
     }
 
@@ -52,7 +71,7 @@ class TransaksiController extends Controller
         $target_barang = Barang::where('id',$request->id_barang)
             ->first();
 
-        $cache_stok = Cache::put('c_stk',$target_barang->stok, now()->addMinute(20));
+        Cache::put('c_stk',$target_barang->stok, now()->addMinute(20));
 
         
         if ($request->kuantitas > $target_barang->stok) {
@@ -97,40 +116,44 @@ class TransaksiController extends Controller
                     ]);
             }
         }
-
-
-
     }
 
     public function show($id)
     {
-        $transaksi = Transaksi::find($id);
-        $customer = User::where('level','customer')
-            ->get();
-        $petugas = User::where('level','admin')
-            ->orWhere('level','petugas')
-            ->get();
-        $barang = Barang::all();
-
-        if ($transaksi === null) {
-            return redirect('/transaksi')
-                ->with('status',[
-                    'type' => 'danger',
-                    'message' => 'Invalid Target Data'
-                ]);
-
-        } else if ($customer->first() === null || $petugas->first() === null || $barang === null) {
-            return redirect('/transaksi')
-                ->with('status',[
-                    'type' => 'danger',
-                    'message' => 'Reference Data is Empty'
-                ]);
+        if (Auth::user()->level === 'admin' || Auth::user()->level === 'petugas') {
+            $transaksi = Transaksi::find($id);
+            $customer = User::where('level','customer')
+                ->get();
+            $petugas = User::where('level','admin')
+                ->orWhere('level','petugas')
+                ->get();
+            $barang = Barang::all();
+    
+            if ($transaksi === null) {
+                return redirect('/transaksi')
+                    ->with('status',[
+                        'type' => 'danger',
+                        'message' => 'Invalid Target Data'
+                    ]);
+    
+            } else if ($customer->first() === null || $petugas->first() === null || $barang === null) {
+                return redirect('/transaksi')
+                    ->with('status',[
+                        'type' => 'danger',
+                        'message' => 'Reference Data is Empty'
+                    ]);
+    
+            } else {
+                return view('Transaksi.show', compact(['transaksi','customer','petugas','barang']));
+            }
 
         } else {
-            return view('Transaksi.show', compact(['transaksi','customer','petugas','barang']));
+            Auth::logout();
+            return redirect('/')->with('status',[
+                'type' => 'danger',
+                'message' => 'User do not have access'
+            ]);
         }
-        
-        
     }
 
     public function update(Request $request, $id)
@@ -206,66 +229,93 @@ class TransaksiController extends Controller
 
     public function destroy($id)
     {
-        $transaksi = Transaksi::find($id);
-
-        if ($transaksi === null) {
-            return redirect('/transaksi')
-                ->with('status',[
-                    'type' => 'danger',
-                    'message' => 'Invalid Target Data'
-                ]);
-                
-        } else {
-            try {
-                $transaksi->delete();
-
+        if (Auth::user()->level === 'admin' || Auth::user()->level === 'petugas') {
+            $transaksi = Transaksi::find($id);
+    
+            if ($transaksi === null) {
                 return redirect('/transaksi')
-                        ->with('status',[
-                            'type' => 'warning',
-                            'message' => 'Data Successfully Deleted'
-                        ]);
-
-            } catch (\Throwable $th) {
-                return redirect('/transaksi')
-                        ->with('status',[
-                            'type' => 'danger',
-                            'message' => 'Error Destroy Data'
-                        ]);
+                    ->with('status',[
+                        'type' => 'danger',
+                        'message' => 'Invalid Target Data'
+                    ]);
+                    
+            } else {
+                try {
+                    $transaksi->delete();
+    
+                    return redirect('/transaksi')
+                            ->with('status',[
+                                'type' => 'warning',
+                                'message' => 'Data Successfully Deleted'
+                            ]);
+    
+                } catch (\Throwable $th) {
+                    return redirect('/transaksi')
+                            ->with('status',[
+                                'type' => 'danger',
+                                'message' => 'Error Destroy Data'
+                            ]);
+                }
             }
+
+        } else {
+            Auth::logout();
+            return redirect('/')->with('status',[
+                'type' => 'danger',
+                'message' => 'User do not have access'
+            ]);
         }
     }
 
     public function print ()
     {
-        $transaksi = Transaksi::all();
-        $tahun = Carbon::today()->year;
-        $bulan = Carbon::today()->monthName;
-
-        if ($transaksi === null) {
-            return redirect('/transaksi')
-                        ->with('status',[
-                            'type' => 'danger',
-                            'message' => 'Record is empty'
-                        ]);
+        if (Auth::user()->level === 'admin' || Auth::user()->level === 'petugas') {
+            $transaksi = Transaksi::all();
+            $tahun = Carbon::today()->year;
+            $bulan = Carbon::today()->monthName;
+    
+            if ($transaksi === null) {
+                return redirect('/transaksi')
+                            ->with('status',[
+                                'type' => 'danger',
+                                'message' => 'Record is empty'
+                            ]);
+    
+            } else {
+                return view('Transaksi.print', compact(['transaksi','tahun','bulan']));
+            }
 
         } else {
-            return view('Transaksi.print', compact(['transaksi','tahun','bulan']));
+            Auth::logout();
+            return redirect('/')->with('status',[
+                'type' => 'danger',
+                'message' => 'User do not have access'
+            ]);
         }
     }
 
     public function receipt ($id)
     {
-        $transaksi = Transaksi::find($id);
-
-        if ($transaksi === null) {
-            return redirect('/transaksi')
-                        ->with('status',[
-                            'type' => 'danger',
-                            'message' => 'Invalid Target Data'
-                        ]);
+        if (Auth::user()->level === 'admin' || Auth::user()->level === 'petugas') {
+            $transaksi = Transaksi::find($id);
+    
+            if ($transaksi === null) {
+                return redirect('/transaksi')
+                            ->with('status',[
+                                'type' => 'danger',
+                                'message' => 'Invalid Target Data'
+                            ]);
+    
+            } else {
+                return view('Transaksi.receipt', compact(['transaksi']));
+            }
 
         } else {
-            return view('Transaksi.receipt', compact(['transaksi']));
+            Auth::logout();
+            return redirect('/')->with('status',[
+                'type' => 'danger',
+                'message' => 'User do not have access'
+            ]);
         }
     }
 }

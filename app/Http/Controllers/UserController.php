@@ -4,21 +4,40 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
     public function index()
     {
-        $petugas = User::where('level','admin')
-            ->orWhere('level','petugas')
-            ->get();
-        // dd($petugas);
-        return view('User.Petugas.index', compact(['petugas']));
+        if (Auth::user()->level === 'admin') {
+            $petugas = User::where('level','admin')
+                ->orWhere('level','petugas')
+                ->get();
+            return view('User.Petugas.index', compact(['petugas']));
+
+        } else {
+            Auth::logout();
+            return redirect('/')->with('status',[
+                'type' => 'danger',
+                'message' => 'User do not have access'
+            ]);
+        }
+
     }
 
     public function create()
     {
-        return view('User.Petugas.create');
+        if (Auth::user()->level === 'admin') {
+            return view('User.Petugas.create');
+
+        } else {
+            Auth::logout();
+            return redirect('/')->with('status',[
+                'type' => 'danger',
+                'message' => 'User do not have access'
+            ]);
+        }
     }
 
     public function store(Request $request)
@@ -58,17 +77,26 @@ class UserController extends Controller
 
     public function show($id)
     {
-        $petugas = User::find($id);
-
-        if ($petugas === null) {
-            return redirect('/petugas')
-                ->with('status',[
-                    'type' => 'danger',
-                    'message' => 'Invalid Target Data'
-                ]);
+        if (Auth::user()->level === 'admin') {
+            $petugas = User::find($id);
+    
+            if ($petugas === null) {
+                return redirect('/petugas')
+                    ->with('status',[
+                        'type' => 'danger',
+                        'message' => 'Invalid Target Data'
+                    ]);
+    
+            } else {
+                return view('User.Petugas.show', compact(['petugas']));
+            }
 
         } else {
-            return view('User.Petugas.show', compact(['petugas']));
+            Auth::logout();
+            return redirect('/')->with('status',[
+                'type' => 'danger',
+                'message' => 'User do not have access'
+            ]);
         }
     }
     
@@ -121,48 +149,66 @@ class UserController extends Controller
 
     public function destroy($id)
     {
-        $petugas = User::find($id);
-
-        if ($petugas === null) {
-            return redirect('/petugas')
-                ->with('status',[
-                    'type' => 'danger',
-                    'message' => 'Invalid Target Data'
-                ]);
-                
-        } else {
-            try {
-                $petugas->delete();
-
+        if (Auth::user()->level === 'admin') {
+            $petugas = User::find($id);
+    
+            if ($petugas === null) {
                 return redirect('/petugas')
-                ->with('status',[
-                    'type' => 'warning',
-                    'message' => 'Data Successfully Deleted'
-                ]);
-
-            } catch (\Throwable $th) {
-                return redirect('/petugas')
-                ->with('status',[
-                    'type' => 'danger',
-                    'message' => 'Error Destroy Data'
-                ]);
+                    ->with('status',[
+                        'type' => 'danger',
+                        'message' => 'Invalid Target Data'
+                    ]);
+                    
+            } else {
+                try {
+                    $petugas->delete();
+    
+                    return redirect('/petugas')
+                    ->with('status',[
+                        'type' => 'warning',
+                        'message' => 'Data Successfully Deleted'
+                    ]);
+    
+                } catch (\Throwable $th) {
+                    return redirect('/petugas')
+                    ->with('status',[
+                        'type' => 'danger',
+                        'message' => 'Error Destroy Data'
+                    ]);
+                }
             }
+
+        } else {
+            Auth::logout();
+            return redirect('/')->with('status',[
+                'type' => 'danger',
+                'message' => 'User do not have access'
+            ]);
         }
     }
 
     public function show_password ($id) 
     {
-        $petugas = User::find($id);
+        if (Auth::user()->level === 'admin') {
+            $petugas = User::find($id);
+    
+            if ($petugas === null) {
+                return redirect('/petugas')
+                    ->with('status',[
+                        'type' => 'danger',
+                        'message' => 'Invalid Target Data'
+                    ]);
+                    
+            } else {
+                return view('User.Petugas.show-password', compact(['petugas']));
+            }
 
-        if ($petugas === null) {
-            return redirect('/petugas')
-                ->with('status',[
-                    'type' => 'danger',
-                    'message' => 'Invalid Target Data'
-                ]);
-                
         } else {
-            return view('User.Petugas.show-password', compact(['petugas']));
+            Auth::logout();
+            return redirect('/')->with('status',[
+                'type' => 'danger',
+                'message' => 'User do not have access'
+            ]);
         }
     }
 

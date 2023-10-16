@@ -1,5 +1,5 @@
 @extends('layout.master')
-@section('title','Halaman Tambah Data Transaksi')
+@section('title','Halaman Beli Barang')
 @section('content')
     <div class="content-wrapper">
         <br>
@@ -14,29 +14,29 @@
                         @endif
                         <div class="card">
                             <div class="card-header">
-                                <h3>Form Tambah Data Transaksi</h3>
+                                <h3>Form Beli Barang</h3>
                             </div>
                             <div class="card-body">
-                                <form action="/transaksi/store" method="post">
+                                <form action="/customer/buy" method="post">
                                     @csrf
-                                    <div class="form-group">
+                                    @if ( Auth::user()->level === 'customer' )
+                                        <input type="text" name="id_customer" value="{{ Auth::user()->id_customer }}" hidden>
+                                    @else
                                         <label>Customer</label>
                                         <select name="id_customer" class="form-control">
                                             @foreach ($customer as $c)
-                                                <option value="{{ $c->id_customer }}">{{ $c->id_customer }} | {{ $c->nama }}</option>
+                                                <option value="{{ $c->id_customer }}">{{ $c->username }} | {{ $c->nama }}</option>
                                             @endforeach
                                         </select>
-                                    </div>
+                                        @if ($errors->first('id_customer'))
+                                            <p class="text-danger">* {{ $errors->first('id_customer') }}</p>
+                                        @endif
+
+                                    @endif
+                                    <input type="text" name="id_barang" value="{{ $barang->id }}" hidden>
                                     <div class="form-group">
                                         <label>Barang</label>
-                                        <select name="id_barang" class="form-control">
-                                            @foreach ($barang as $b)
-                                                <option value="{{ $b->id }}">{{ $b->nama_barang }} | {{ $b->Supplier->nama_perusahaan }} | Rp.{{ number_format($b->harga,2,',','.') }}</option>
-                                            @endforeach
-                                        </select>
-                                        @if ($errors->first('id_barang'))
-                                            <p class="text-danger">* {{ $errors->first('id_barang') }}</p>
-                                        @endif
+                                        <input type="text" class="form-control" value="{{ $barang->nama_barang }} | {{ $barang->Supplier->nama_perusahaan }} | Rp.{{ number_format($barang->harga,2,',','.') }}" disabled>
                                     </div>
                                     <div class="form-group">
                                         <label>Kuantitas Pembelian</label>
@@ -46,20 +46,21 @@
                                         @endif
                                     </div>
                                     <div class="form-group">
-                                        @if ( Auth::user()->level === 'petugas' )
-                                            <input type="text" name="id_petugas" value="{{ Auth::user()->id }}" hidden>
-
-                                        @else
-                                            <label>Petugas</label>
-                                            <select name="id_petugas" class="form-control">
-                                                @foreach ($petugas as $p)
-                                                    <option value="{{ $p->id }}">{{ $p->username }} | {{ $p->nama }}</option>
-                                                @endforeach
-                                            </select>
-                                            @if ($errors->first('id_petugas'))
-                                                <p class="text-danger">* {{ $errors->first('id_petugas') }}</p>
-                                            @endif
-
+                                        <label>Jumlah Bayar</label>
+                                        <input class="form-control" name="jumlah_bayar" type="number" placeholder="Masukkan Jumlah Bayar">
+                                        @if ($errors->first('jumlah_bayar'))
+                                            <p class="text-danger">* {{ $errors->first('jumlah_bayar') }}</p>
+                                        @endif
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Petugas</label>
+                                        <select name="id_petugas" class="form-control">
+                                            @foreach ($petugas as $p)
+                                                <option value="{{ $p->id }}">{{ $p->username }} | {{ $p->nama }}</option>
+                                            @endforeach
+                                        </select>
+                                        @if ($errors->first('id_petugas'))
+                                            <p class="text-danger">* {{ $errors->first('id_petugas') }}</p>
                                         @endif
                                     </div>
                                     <div class="form-group">

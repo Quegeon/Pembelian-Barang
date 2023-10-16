@@ -20,7 +20,18 @@ class LoginController extends Controller
         ]);
 
         if (Auth::attempt($request->only('username','password'))) {
-            return redirect('/dashboard');
+            if (Auth::user()->level === 'admin') {
+                return redirect('/dashboard');
+
+            } else if (Auth::user()->level === 'petugas') {
+                return redirect('/dashboard/petugas');
+
+            } else if (Auth::user()->level === 'customer') {
+                return redirect('/dashboard/customer');
+            
+            } else {
+                return redirect('/dashboard/supplier');
+            }
 
         } else {
             return back()
@@ -35,6 +46,9 @@ class LoginController extends Controller
     {
         Auth::logout();
 
-        return redirect('/');
+        return redirect('/')->with('status',[
+            'type' => 'success',
+            'message' => 'Successfully Logged Out'
+        ]);
     }
 }

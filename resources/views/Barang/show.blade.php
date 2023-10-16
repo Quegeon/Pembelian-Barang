@@ -50,15 +50,21 @@
                                         @endif
                                     </div>
                                     <div class="form-group">
-                                        <label>Supplier</label>
-                                        <select name="id_supplier" class="form-control">
-                                            <option value="{{ $barang->id_supplier }}">Default: {{ $barang->Supplier->nama }} | {{ $barang->Supplier->nama_perusahaan }}</option>
-                                            @foreach ($supplier as $s)
-                                                <option value="{{ $s->id_supplier }}">{{ $s->nama }} | {{ $s->nama_perusahaan }}</option>                                                
-                                            @endforeach
-                                        </select>
-                                        @if ($errors->first('id_supplier'))
-                                            <p class="text-danger">* {{ $errors->first('id_supplier') }}</p>
+                                        @if ( Auth::user()->level === 'supplier' )
+                                            <input type="text" name="id_supplier" value="{{ Auth::user()->id_supplier }}" hidden>
+                                            
+                                        @else
+                                            <label>Supplier</label>
+                                            <select name="id_supplier" class="form-control">
+                                                <option value="{{ $barang->id_supplier }}">Default: {{ $barang->Supplier->nama }} | {{ $barang->Supplier->nama_perusahaan }}</option>
+                                                @foreach ($supplier as $s)
+                                                    <option value="{{ $s->id_supplier }}">{{ $s->nama }} | {{ $s->nama_perusahaan }}</option>                                                
+                                                @endforeach
+                                            </select>
+                                            @if ($errors->first('id_supplier'))
+                                                <p class="text-danger">* {{ $errors->first('id_supplier') }}</p>
+                                            @endif
+                                            
                                         @endif
                                     </div>
                                     <button type="submit" class="btn btn-primary">Simpan</button>

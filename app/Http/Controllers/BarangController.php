@@ -5,29 +5,58 @@ namespace App\Http\Controllers;
 use App\Models\Barang;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class BarangController extends Controller
 {
     public function index()
     {
-        $barang = Barang::all();
-        return view('Barang.index', compact(['barang']));
+        if (Auth::user()->level === 'admin') {
+            $barang = Barang::all();
+            return view('Barang.index', compact(['barang']));
+            
+        } else if (Auth::user()->level === 'supplier') {
+            $barang = Barang::where('id_supplier', Auth::user()->id_supplier)
+                ->get();
+
+            return view('Barang.index', compact(['barang']));
+
+        } else {
+            Auth::logout();
+            return redirect('/')->with('status',[
+                'type' => 'danger',
+                'message' => 'User do not have access'
+            ]);
+        }
+
     }
 
     public function create()
     {
-        $supplier = User::where('level','supplier')
-            ->get();
-        
-        if ($supplier->first() === null) {
-            return redirect('/barang')
-                ->with('status',[
-                    'type' => 'danger',
-                    'message' => 'Supplier Data is Empty'
-                ]);
+        if (Auth::user()->level === 'admin') {
+            $supplier = User::where('level','supplier')
+                ->get();
+            
+            if ($supplier->first() === null) {
+                return redirect('/barang')
+                    ->with('status',[
+                        'type' => 'danger',
+                        'message' => 'Supplier Data is Empty'
+                    ]);
+    
+            } else {
+                return view('Barang.create', compact(['supplier']));
+            }
 
+        } else if (Auth::user()->level === 'supplier') {
+            return view('Barang.create');            
+            
         } else {
-            return view('Barang.create', compact(['supplier']));
+            Auth::logout();
+            return redirect('/')->with('status',[
+                'type' => 'danger',
+                'message' => 'User do not have access'
+            ]);
         }
     }
 
@@ -68,26 +97,49 @@ class BarangController extends Controller
 
     public function show($id)
     {
-        $barang = Barang::find($id);
-        $supplier = User::where('level','supplier')
-            ->get();
+        if (Auth::user()->level === 'admin') {
+            $barang = Barang::find($id);
+            $supplier = User::where('level','supplier')
+                ->get();
+    
+            if ($barang === null) {
+                return redirect('/barang')
+                    ->with('status',[
+                        'type' => 'danger',
+                        'message' => 'Invalid Target Data'
+                    ]);
+    
+            } else if ($supplier->first() === null) {
+                return redirect('/barang')
+                    ->with('status',[
+                        'type' => 'danger',
+                        'message' => 'Supplier Data is Empty'
+                    ]);
+    
+            } else {
+                return view('Barang.show', compact(['barang','supplier']));
+            }
+        
+        } else if (Auth::user()->level === 'supplier') {
+            $barang = Barang::find($id);
+    
+            if ($barang === null) {
+                return redirect('/barang')
+                    ->with('status',[
+                        'type' => 'danger',
+                        'message' => 'Invalid Target Data'
+                    ]);
 
-        if ($barang === null) {
-            return redirect('/barang')
-                ->with('status',[
-                    'type' => 'danger',
-                    'message' => 'Invalid Target Data'
-                ]);
-
-        } else if ($supplier->first() === null) {
-            return redirect('/barang')
-                ->with('status',[
-                    'type' => 'danger',
-                    'message' => 'Supplier Data is Empty'
-                ]);
-
+            } else {
+                return view('Barang.show', compact(['barang']));
+            }
+    
         } else {
-            return view('Barang.show', compact(['barang','supplier']));
+            Auth::logout();
+            return redirect('/')->with('status',[
+                'type' => 'danger',
+                'message' => 'User do not have access'
+            ]);
         }
     }
 
@@ -140,32 +192,41 @@ class BarangController extends Controller
 
     public function destroy($id)
     {
-        $barang = Barang::find($id);
-
-        if ($barang === null) {
-            return redirect('/barang')
-                ->with('status',[
-                    'type' => 'danger',
-                    'message' => 'Invalid Target Data'
-                ]);
-
-        } else {
-            try {
-                $barang->delete();
-
-                return redirect('/barang')
-                    ->with('status',[
-                        'type' => 'warning',
-                        'message' => 'Data Successfully Deleted'
-                    ]);
-
-            } catch (\Throwable $th) {
+        if (Auth::user()->level === 'admin' || Auth::user()->level === 'supplier') {
+            $barang = Barang::find($id);
+            
+            if ($barang === null) {
                 return redirect('/barang')
                     ->with('status',[
                         'type' => 'danger',
-                        'message' => 'Error Destroy Data'
+                        'message' => 'Invalid Target Data'
                     ]);
+    
+            } else {
+                try {
+                    $barang->delete();
+    
+                    return redirect('/barang')
+                        ->with('status',[
+                            'type' => 'warning',
+                            'message' => 'Data Successfully Deleted'
+                        ]);
+    
+                } catch (\Throwable $th) {
+                    return redirect('/barang')
+                        ->with('status',[
+                            'type' => 'danger',
+                            'message' => 'Error Destroy Data'
+                        ]);
+                }
             }
+
+        } else {
+            Auth::logout();
+            return redirect('/')->with('status',[
+                'type' => 'danger',
+                'message' => 'User do not have access'
+            ]);
         }
     }
 }

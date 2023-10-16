@@ -20,15 +20,21 @@
                                 <form action="/transaksi/{{ $transaksi->id }}/update" method="post">
                                     @csrf
                                     <div class="form-group">
-                                        <label>Customer</label>
-                                        <select name="id_customer" class="form-control">
-                                            <option value="{{ $transaksi->id_customer }}">Default: {{ $transaksi->id_customer }} | {{ $transaksi->Customer->username }}</option>
-                                            @foreach ($customer as $c)
-                                                <option value="{{ $c->id_customer }}">{{ $c->id_customer }} | {{ $c->nama }}</option>
-                                            @endforeach
-                                        </select>
-                                        @if ($errors->first('id_customer'))
-                                            <p class="text-danger">* {{ $errors->first('id_customer') }}</p>
+                                        @if ( Auth::user()->level === 'customer' )
+                                            <input type="text" name="id_customer" value="{{ Auth::user()->id_customer }}" hidden>
+                                            
+                                        @else
+                                            <label>Customer</label>
+                                            <select name="id_customer" class="form-control">
+                                                <option value="{{ $transaksi->id_customer }}">Default: {{ $transaksi->id_customer }} | {{ $transaksi->Customer->username }}</option>
+                                                @foreach ($customer as $c)
+                                                    <option value="{{ $c->id_customer }}">{{ $c->id_customer }} | {{ $c->nama }}</option>
+                                                @endforeach
+                                            </select>
+                                            @if ($errors->first('id_customer'))
+                                                <p class="text-danger">* {{ $errors->first('id_customer') }}</p>
+                                            @endif
+                                            
                                         @endif
                                     </div>
                                     <div class="form-group">
@@ -51,15 +57,21 @@
                                         @endif
                                     </div>
                                     <div class="form-group">
-                                        <label>Petugas</label>
-                                        <select name="id_petugas" class="form-control">
-                                            <option value="{{ $transaksi->id_petugas }}">Default: {{ $transaksi->Petugas->username }} | {{ $transaksi->Petugas->nama }}</option>
-                                            @foreach ($petugas as $p)
-                                                <option value="{{ $p->id }}">{{ $p->username }} | {{ $p->nama }}</option>
-                                            @endforeach
-                                        </select>
-                                        @if ($errors->first('id_petugas'))
-                                            <p class="text-danger">* {{ $errors->first('id_petugas') }}</p>
+                                        @if ( Auth::user()->level === 'petugas' )
+                                            <input type="text" name="id_petugas" value="{{ Auth::user()->id }}" hidden>
+
+                                        @else
+                                            <label>Petugas</label>
+                                            <select name="id_petugas" class="form-control">
+                                                <option value="{{ $transaksi->id_petugas }}">Default: {{ $transaksi->Petugas->username }} | {{ $transaksi->Petugas->nama }}</option>
+                                                @foreach ($petugas as $p)
+                                                    <option value="{{ $p->id }}">{{ $p->username }} | {{ $p->nama }}</option>
+                                                @endforeach
+                                            </select>
+                                            @if ($errors->first('id_petugas'))
+                                                <p class="text-danger">* {{ $errors->first('id_petugas') }}</p>
+                                            @endif
+                                            
                                         @endif
                                     </div>
                                     <div class="form-group">

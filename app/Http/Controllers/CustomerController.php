@@ -2,21 +2,44 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Barang;
+use App\Models\Transaksi;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class CustomerController extends Controller
 {
     public function index()
     {
-        $customer = User::where('level','customer')
-            ->get();
-        return view('User.Customer.index', compact(['customer']));
+        if (Auth::user()->level === 'admin' || Auth::user()->level === 'customer') {
+            $customer = User::where('level','customer')
+                ->get();
+            return view('User.Customer.index', compact(['customer']));
+
+        } else {
+            Auth::logout();
+            return redirect('/')->with('status',[
+                'type' => 'danger',
+                'message' => 'User do not have access'
+            ]);
+        }
     }
 
     public function create()
     {
-        return view('User.Customer.create');
+        if (Auth::user()->level === 'admin' || Auth::user()->level === 'customer') {
+            return view('User.Customer.create');
+
+        } else {
+            Auth::logout();
+            return redirect('/')->with('status',[
+                'type' => 'danger',
+                'message' => 'User do not have access'
+            ]);
+        }
     }
 
     public function store(Request $request)
@@ -63,18 +86,27 @@ class CustomerController extends Controller
 
     public function show($id)
     {
-        $customer = User::where('id_customer',$id)
-            ->first();
-
-        if ($customer === null) {
-            return redirect('/customer')
-                ->with('status',[
-                    'type' => 'danger',
-                    'message' => 'Invalid Target Data'
-                ]);
+        if (Auth::user()->level === 'admin' || Auth::user()->level === 'customer') {
+            $customer = User::where('id_customer',$id)
+                ->first();
+    
+            if ($customer === null) {
+                return redirect('/customer')
+                    ->with('status',[
+                        'type' => 'danger',
+                        'message' => 'Invalid Target Data'
+                    ]);
+    
+            } else {
+                return view('User.Customer.show', compact(['customer']));
+            }
 
         } else {
-            return view('User.Customer.show', compact(['customer']));
+            Auth::logout();
+            return redirect('/')->with('status',[
+                'type' => 'danger',
+                'message' => 'User do not have access'
+            ]);
         }
     }
 
@@ -127,50 +159,68 @@ class CustomerController extends Controller
 
     public function destroy($id)
     {
-        $customer = User::where('id_customer',$id)
-            ->first();
-
-        if ($customer === null) {
-            return redirect('/customer')
-                ->with('status',[
-                    'type' => 'danger',
-                    'message' => 'Invalid Target Data'
-                ]);
-
-        } else {
-            try {
-                $customer->delete();
-
-                return redirect('/customer')
-                    ->with('status',[
-                        'type' => 'warning',
-                        'message' => 'Data Successfully Deleted'
-                    ]);
-
-            } catch (\Throwable $th) {
+        if (Auth::user()->level === 'admin' || Auth::user()->level === 'customer') {
+            $customer = User::where('id_customer',$id)
+                ->first();
+    
+            if ($customer === null) {
                 return redirect('/customer')
                     ->with('status',[
                         'type' => 'danger',
-                        'message' => 'Error Destroy Data'
+                        'message' => 'Invalid Target Data'
                     ]);
+    
+            } else {
+                try {
+                    $customer->delete();
+    
+                    return redirect('/customer')
+                        ->with('status',[
+                            'type' => 'warning',
+                            'message' => 'Data Successfully Deleted'
+                        ]);
+    
+                } catch (\Throwable $th) {
+                    return redirect('/customer')
+                        ->with('status',[
+                            'type' => 'danger',
+                            'message' => 'Error Destroy Data'
+                        ]);
+                }
             }
+
+        } else {
+            Auth::logout();
+            return redirect('/')->with('status',[
+                'type' => 'danger',
+                'message' => 'User do not have access'
+            ]);
         }
     }
 
     public function show_password ($id)
     {
-        $customer = User::where('id_customer',$id)
-            ->first();
-        
-        if ($customer === null) {
-            return redirect('/customer')
-                ->with('status',[
-                    'type' => 'danger',
-                    'message' => 'Invalid Target Data'
-                ]);
+        if (Auth::user()->level === 'admin' || Auth::user()->level === 'customer') {
+            $customer = User::where('id_customer',$id)
+                ->first();
+            
+            if ($customer === null) {
+                return redirect('/customer')
+                    ->with('status',[
+                        'type' => 'danger',
+                        'message' => 'Invalid Target Data'
+                    ]);
+    
+            } else {
+                return view('User.Customer.show-password', compact(['customer']));
+            }
 
         } else {
-            return view('User.Customer.show-password', compact(['customer']));
+            Auth::logout();
+            return redirect('/')->with('status',[
+                'type' => 'danger',
+                'message' => 'User do not have access'
+            ]);
         }
     }
 
@@ -218,6 +268,153 @@ class CustomerController extends Controller
                         'type' => 'danger',
                         'message' => 'Error Change Password'
                     ]);
+                }
+            }
+        }
+    }
+
+    public function index_buy ()
+    {
+        if ( Auth::user()->level === 'admin' || Auth::user()->level === 'customer' ) {
+            $barang = Barang::where('stok','>',0)
+                ->get();
+            
+            return view('User.Customer.index-buy', compact(['barang']));
+
+        } else {
+            Auth::logout();
+            return redirect('/')->with('status',[
+                'type' => 'danger',
+                'message' => 'User do not have access'
+            ]);
+        }
+    }
+
+    public function show_buy ($id)
+    {
+        if (Auth::user()->level === 'customer') {
+            $barang = Barang::find($id);
+            $petugas = User::where('level','admin')
+                ->orWhere('level','petugas')
+                ->get();
+
+            if ($barang === null) {
+                return redirect('/customer/index-bayar')
+                    ->with('status',[
+                        'type' => 'danger',
+                        'message' => 'Invalid Target Data'
+                    ]);
+    
+            } else if ($petugas->first() === null) {
+                return redirect('/customer/index-buy')
+                    ->with('status',[
+                        'type' => 'danger',
+                        'message' => 'Reference Data is Empty'
+                    ]);
+    
+            } else {
+                return view('User.Customer.show-buy', compact(['barang','petugas']));
+            }
+
+        } else if (Auth::user()->level === 'admin') {
+            $barang = Barang::find($id);
+            $customer = User::where('level','customer')
+                ->get();
+            $petugas = User::where('level','admin')
+                ->orWhere('level','petugas')
+                ->get();
+
+            if ($barang === null) {
+                return redirect('/customer/index-bayar')
+                    ->with('status',[
+                        'type' => 'danger',
+                        'message' => 'Invalid Target Data'
+                    ]);
+    
+            } else if ($petugas->first() === null) {
+                return redirect('/customer/index-buy')
+                    ->with('status',[
+                        'type' => 'danger',
+                        'message' => 'Reference Data is Empty'
+                    ]);
+    
+            } else {
+                return view('User.Customer.show-buy', compact(['barang','customer','petugas']));
+            }
+        } else {
+            Auth::logout();
+            return redirect('/')->with('status',[
+                'type' => 'danger',
+                'message' => 'User do not have access'
+            ]);
+        }
+    }
+
+    public function buy (Request $request)
+    {
+        $request->validate([
+            'id_customer' => 'required|max:11',
+            'id_petugas' => 'required|max:11',
+            'id_barang' => 'required|numeric',
+            'kuantitas' => 'required|numeric',
+            'jumlah_bayar' => 'required|numeric',
+            'catatan' => 'max:255',
+        ]);
+
+        $target_barang = Barang::where('id',$request->id_barang)
+            ->first();
+
+        Cache::put('c_stk',$target_barang->stok, now()->addMinute(20));
+
+        
+        if ($request->kuantitas > $target_barang->stok) {
+            return back()
+                ->with('status',[
+                    'type' => 'danger',
+                    'message' => 'Quantity is Exceeding Stock'
+                ]);    
+            
+        } else {
+            $total_harga =  $target_barang->harga * $request->kuantitas;
+            $update_stok = $target_barang->stok - $request->kuantitas;
+            $tanggal_bayar = Carbon::today();
+
+            if ($request->jumlah_bayar < $total_harga) {
+                return back()
+                    ->with('status',[
+                        'type' => 'danger',
+                        'message' => 'Jumlah Bayar need to match Total Harga!'
+                    ]); 
+                    
+            } else {
+                try {
+                    $target_barang->update([
+                        'stok' => $update_stok
+                    ]);
+    
+                    Transaksi::create([
+                        'id_customer' => $request->id_customer,
+                        'id_petugas' => $request->id_petugas,
+                        'id_barang' => $request->id_barang,
+                        'kuantitas' => $request->kuantitas,
+                        'total_harga' => $total_harga,
+                        'tanggal_bayar' => $tanggal_bayar,
+                        'catatan' => $request->catatan,
+                        $request->except(['_token'])
+                    ]);
+        
+                    return redirect('/customer/index-buy')
+                        ->with('status',[
+                            'type' => 'success',
+                            'message' => 'Data Successfully Created'
+                        ]);
+        
+                } catch (\Throwable $th) {
+                    return redirect('/customer/index-buy')
+                        ->with('status',[
+                            'type' => 'danger',
+                            'message' => 'Error Store Data'
+                        ]);
                 }
             }
         }

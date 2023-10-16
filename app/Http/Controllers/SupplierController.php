@@ -4,20 +4,39 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SupplierController extends Controller
 {
 
     public function index()
     {
-        $supplier = User::where('level','supplier')
-            ->get();
-        return view('User.Supplier.index', compact(['supplier']));
+        if (Auth::user()->level === 'admin' || Auth::user()->level === 'supplier') {
+            $supplier = User::where('level','supplier')
+                ->get();
+            return view('User.Supplier.index', compact(['supplier']));
+
+        } else {
+            Auth::logout();
+            return redirect('/')->with('status',[
+                'type' => 'danger',
+                'message' => 'User do not have access'
+            ]);
+        }
     }
 
     public function create()
     {
-        return view('User.Supplier.create');
+        if (Auth::user()->level === 'admin' || Auth::user()->level === 'supplier') {
+            return view('User.Supplier.create');
+
+        } else {
+            Auth::logout();
+            return redirect('/')->with('status',[
+                'type' => 'danger',
+                'message' => 'User do not have access'
+            ]);
+        }
     }
 
     public function store(Request $request)
@@ -66,17 +85,26 @@ class SupplierController extends Controller
 
     public function show($id)
     {
-        $supplier = User::where('id_supplier',$id)
-            ->first();
+        if (Auth::user()->level === 'admin' || Auth::user()->level === 'supplier') {
+            $supplier = User::where('id_supplier',$id)
+                ->first();
+    
+            if ($supplier === null) {
+                return redirect('/supplier')
+                    ->with('status',[
+                        'type' => 'danger',
+                        'message' => 'Invalid Target Data'
+                    ]);
+            } else {
+                return view('User.Supplier.show', compact(['supplier']));
+            }
 
-        if ($supplier === null) {
-            return redirect('/supplier')
-                ->with('status',[
-                    'type' => 'danger',
-                    'message' => 'Invalid Target Data'
-                ]);
         } else {
-            return view('User.Supplier.show', compact(['supplier']));
+            Auth::logout();
+            return redirect('/')->with('status',[
+                'type' => 'danger',
+                'message' => 'User do not have access'
+            ]);
         }
     }
 
@@ -130,48 +158,66 @@ class SupplierController extends Controller
 
     public function destroy($id)
     {
-        $supplier = User::where('id_supplier',$id)
-            ->first();
-        
-        if ($supplier === null) {
-            return redirect('/supplier')
-                ->with('status',[
-                    'type' => 'danger',
-                    'message' => 'Invalid Target Data'
-                ]);
-        } else {
-            try {
-                $supplier->delete();
-
-                return redirect('/supplier')
-                    ->with('status',[
-                        'type' => 'warning',
-                        'message' => 'Data Successfully Deleted'
-                    ]);
-
-            } catch (\Throwable $th) {
+        if (Auth::user()->level === 'admin' || Auth::user()->level === 'supplier') {
+            $supplier = User::where('id_supplier',$id)
+                ->first();
+            
+            if ($supplier === null) {
                 return redirect('/supplier')
                     ->with('status',[
                         'type' => 'danger',
-                        'message' => 'Error Destroy Data'
+                        'message' => 'Invalid Target Data'
                     ]);
+            } else {
+                try {
+                    $supplier->delete();
+    
+                    return redirect('/supplier')
+                        ->with('status',[
+                            'type' => 'warning',
+                            'message' => 'Data Successfully Deleted'
+                        ]);
+    
+                } catch (\Throwable $th) {
+                    return redirect('/supplier')
+                        ->with('status',[
+                            'type' => 'danger',
+                            'message' => 'Error Destroy Data'
+                        ]);
+                }
             }
+
+        } else {
+            Auth::logout();
+            return redirect('/')->with('status',[
+                'type' => 'danger',
+                'message' => 'User do not have access'
+            ]);
         }
     }
 
     public function show_password ($id) 
     {
-        $supplier = User::where('id_supplier',$id)
-            ->first();
+        if (Auth::user()->level === 'admin' || Auth::user()->level === 'supplier') {
+            $supplier = User::where('id_supplier',$id)
+                ->first();
+    
+            if ($supplier === null) {
+                return redirect('/supplier')
+                    ->with('status',[
+                        'type' => 'danger',
+                        'message' => 'Invalid Target Data'
+                    ]);
+            } else {
+                return view('User.Supplier.show-password', compact(['supplier']));
+            }
 
-        if ($supplier === null) {
-            return redirect('/supplier')
-                ->with('status',[
-                    'type' => 'danger',
-                    'message' => 'Invalid Target Data'
-                ]);
         } else {
-            return view('User.Supplier.show-password', compact(['supplier']));
+            Auth::logout();
+            return redirect('/')->with('status',[
+                'type' => 'danger',
+                'message' => 'User do not have access'
+            ]);
         }
     }
 
