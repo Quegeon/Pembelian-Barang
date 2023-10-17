@@ -255,19 +255,38 @@ class CustomerController extends Controller
                         'password' => bcrypt($request->confirm_password),
                         $request->except(['_token'])
                     ]);
+
+                    if (Auth::user()->level === 'customer') {
+                        return redirect('/customer/profile')
+                            ->with('status',[
+                                'type' => 'success',
+                                'message' => 'Password Successfully Changed'
+                            ]);
+
+                    } else {
+                        return redirect('/customer')
+                            ->with('status',[
+                                'type' => 'success',
+                                'message' => 'Password Successfully Changed'
+                            ]);
+                    }
     
-                    return redirect('/customer')
-                        ->with('status',[
-                            'type' => 'success',
-                            'message' => 'Password Successfully Changed'
-                        ]);
     
                 } catch (\Throwable $th) {
-                    return redirect('/customer')
-                    ->with('status',[
-                        'type' => 'danger',
-                        'message' => 'Error Change Password'
-                    ]);
+                    if (Auth::user()->level === 'customer') {
+                        return redirect('/customer/profile')
+                            ->with('status',[
+                                'type' => 'danger',
+                                'message' => 'Error Change Password'
+                            ]);
+
+                    } else {
+                        return redirect('/customer')
+                            ->with('status',[
+                                'type' => 'danger',
+                                'message' => 'Error Change Password'
+                            ]);
+                    }
                 }
             }
         }
@@ -418,5 +437,71 @@ class CustomerController extends Controller
                 }
             }
         }
+    }
+
+    public function index_profile ()
+    {
+        if (Auth::user()->level === 'customer') {
+            return view('User.Customer.index-profile');
+
+        } else {
+            Auth::logout();
+                return redirect('/')->with('status',[
+                    'type' => 'danger',
+                    'message' => 'User do not have access'
+                ]);
+        }
+    }
+
+    public function show_profile ()
+    {
+        if (Auth::user()->level === 'customer') {
+            return view('User.Customer.show-profile');
+
+        } else {
+            Auth::logout();
+                return redirect('/')->with('status',[
+                    'type' => 'danger',
+                    'message' => 'User do not have access'
+                ]);
+        }
+    }
+
+    public function change_profile (Request $request)
+    {
+        $request->validate([
+            'nama' => 'required|max:50',
+            'username' => 'required|max:20',
+            'no_telp' => 'required|max:13',
+            'email' => 'required|max:50|email',
+            'alamat' => 'required|max:225'
+            ]);
+
+            $customer = User::where('id_customer', Auth::user()->id_customer)
+                ->first();
+
+            try {
+                $customer->update([
+                    'nama' => $request->nama,
+                    'username' => $request->username,
+                    'no_telp' => $request->no_telp,
+                    'email' => $request->email,
+                    'alamat' => $request->alamat,
+                    $request->except(['_token'])
+                ]);
+
+                return redirect('/customer/profile')
+                    ->with('status',[
+                        'type' => 'success',
+                        'message' => 'Data Successfully Update'
+                    ]);
+
+            } catch (\Throwable $th) {
+                return redirect('/customer/profile')
+                    ->with('status',[
+                        'type' => 'danger',
+                        'message' => 'Error Update Data'
+                    ]);
+            }
     }
 }

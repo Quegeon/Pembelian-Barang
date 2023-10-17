@@ -189,7 +189,7 @@ class UserController extends Controller
 
     public function show_password ($id) 
     {
-        if (Auth::user()->level === 'admin') {
+        if (Auth::user()->level === 'admin' || Auth::user()->level === 'petugas') {
             $petugas = User::find($id);
     
             if ($petugas === null) {
@@ -243,20 +243,102 @@ class UserController extends Controller
                         $request->except(['_token'])
                     ]);
 
-                    return redirect('/petugas')
-                        ->with('status',[
-                            'type' => 'success',
-                            'message' => 'Password Successfully Changed'
+                    if (Auth::user()->level === 'petugas') {
+                        return redirect('/petugas/profile')
+                            ->with('status',[
+                                'type' => 'success',
+                                'message' => 'Password Successfully Changed'
                         ]);
 
-                } catch (\Throwable $th) {
-                    return redirect('/petugas')
-                        ->with('status',[
-                            'type' => 'danger',
-                            'message' => 'Error Change Password'
+                    } else {
+                        return redirect('/petugas')
+                            ->with('status',[
+                                'type' => 'success',
+                                'message' => 'Password Successfully Changed'
                         ]);
+                    }
+
+                } catch (\Throwable $th) {
+                    if (Auth::user()->level === 'petugas') {
+                        return redirect('/petugas/profile')
+                            ->with('status',[
+                                'type' => 'success',
+                                'message' => 'Password Successfully Changed'
+                        ]);
+
+                    } else {
+                        return redirect('/petugas')
+                            ->with('status',[
+                                'type' => 'danger',
+                                'message' => 'Error Change Password'
+                            ]);
+                    }
                 }
             }
+        }
+    }
+
+    public function index_profile ()
+    {
+        if (Auth::user()->level === 'admin' || Auth::user()->level === 'petugas') {
+            return view('User.Petugas.index-profile');
+
+        } else {
+            Auth::logout();
+                return redirect('/')->with('status',[
+                    'type' => 'danger',
+                    'message' => 'User do not have access'
+                ]);
+        }
+    }
+
+    public function show_profile ()
+    {
+        if (Auth::user()->level === 'admin' || Auth::user()->level === 'petugas') {
+            return view('User.Petugas.show-profile');
+
+        } else {
+            Auth::logout();
+                return redirect('/')->with('status',[
+                    'type' => 'danger',
+                    'message' => 'User do not have access'
+                ]);
+        }
+    }
+
+    public function change_profile (Request $request)
+    {
+        $request->validate([
+            'nama' => 'required|max:50',
+            'username' => 'required|max:50',
+            'no_telp' => 'required|max:13',
+            'email' => 'required|max:50|email',
+        ]);
+
+        $petugas = User::find(Auth::user()->id);
+
+        try {
+            $petugas->update([
+                'nama' => $request->nama,
+                'username' => $request->username,
+                'no_telp' => $request->no_telp,
+                'email' => $request->email,
+                'level' => Auth::user()->level,
+                $request->except(['_token'])
+            ]);
+
+            return redirect('/petugas/profile')
+            ->with('status',[
+                'type' => 'success',
+                'message' => 'Data Successfully Updated'
+            ]);
+
+        } catch (\Throwable $th) {
+            return redirect('/petugas/profile')
+            ->with('status',[
+                'type' => 'danger',
+                'message' => 'Error Update Data'
+            ]);
         }
     }
 }

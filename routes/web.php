@@ -46,6 +46,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/petugas/{id}/destroy', [UserController::class, 'destroy']);
     Route::get('/petugas/{id}/show/password', [UserController::class, 'show_password']);
     Route::post('/petugas/{id}/change_password', [UserController::class, 'change_password']);
+    Route::get('/petugas/profile', [UserController::class, 'index_profile']);
+    Route::get('/petugas/show/profile', [UserController::class, 'show_profile']);
+    Route::post('/petugas/change_profile', [UserController::class, 'change_profile']);
     
     Route::get('/customer', [CustomerController::class, 'index']);
     Route::get('/customer/create', [CustomerController::class, 'create']);
@@ -58,6 +61,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/customer/index-buy', [CustomerController::class, 'index_buy']);
     Route::get('/customer/{id}/show-buy', [CustomerController::class, 'show_buy']);
     Route::post('/customer/buy', [CustomerController::class, 'buy']);
+    Route::get('/customer/profile', [CustomerCOntroller::class, 'index_profile']);
+    Route::get('/customer/show/profile', [CustomerCOntroller::class, 'show_profile']);
+    Route::post('/customer/change_profile', [CustomerCOntroller::class, 'change_profile']);
     
     Route::get('/supplier', [SupplierController::class, 'index']);
     Route::get('/supplier/create', [SupplierController::class, 'create']);
@@ -67,7 +73,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/supplier/{id}/destroy', [SupplierController::class, 'destroy']);
     Route::get('/supplier/{id}/show/password', [SupplierController::class, 'show_password']);
     Route::post('/supplier/{id}/change_password', [SupplierController::class, 'change_password']);
-    
+    Route::get('/supplier/profile', [SupplierController::class, 'index_profile']);
+    Route::get('/supplier/show/profile', [SupplierController::class, 'show_profile']);
+    Route::post('/supplier/change_profile', [SupplierController::class, 'change_profile']);
+
     Route::get('/barang', [BarangController::class, 'index']);
     Route::get('/barang/create', [BarangController::class, 'create']);
     Route::post('/barang/store', [BarangController::class, 'store']);

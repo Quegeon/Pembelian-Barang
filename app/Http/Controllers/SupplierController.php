@@ -251,21 +251,116 @@ class SupplierController extends Controller
                         'password' => bcrypt($request->confirm_password),
                         $request->except(['_token'])
                     ]);
-    
-                    return redirect('/supplier')
-                        ->with('status',[
-                            'type' => 'success',
-                            'message' => 'Password Successfully Changed'
-                        ]);
+
+                    if (Auth::user()->level === 'supplier') {
+                        return redirect('/supplier/profile')
+                            ->with('status',[
+                                'type' => 'success',
+                                'message' => 'Password Successfully Changed'
+                            ]);
+
+                    } else {
+                        return redirect('/supplier')
+                            ->with('status',[
+                                'type' => 'success',
+                                'message' => 'Password Successfully Changed'
+                            ]);
+                    }
     
                 } catch (\Throwable $th) {
-                    return redirect('/supplier')
-                        ->with('status',[
-                            'type' => 'danger',
-                            'message' => 'Error Change Password'
-                        ]);
+                    if (Auth::user()->level === 'supplier') {
+                        return redirect('/supplier/profiler')
+                            ->with('status',[
+                                'type' => 'danger',
+                                'message' => 'Error Password Change'
+                            ]);
+
+                    } else {
+                        return redirect('/supplier')
+                            ->with('status',[
+                                'type' => 'danger',
+                                'message' => 'Error Password Change'
+                            ]);
+                    }
                 }
             }
+        }
+    }
+
+    public function index_profile ()
+    {
+        if (Auth::user()->level === 'supplier') {
+            return view('User.Supplier.index-profile');
+
+        } else {
+            Auth::logout();
+                return redirect('/')->with('status',[
+                    'type' => 'danger',
+                    'message' => 'User do not have access'
+                ]);
+        }
+    }
+
+    public function show_profile ()
+    {
+        if (Auth::user()->level === 'supplier') {
+            return view('User.Supplier.show-profile');
+
+        } else {
+            Auth::logout();
+                return redirect('/')->with('status',[
+                    'type' => 'danger',
+                    'message' => 'User do not have access'
+                ]);
+        }
+    }
+
+    public function change_profile (Request $request)
+    {
+        if (Auth::user()->level === 'supplier') {
+            $request->validate([
+                'nama' => 'required|max:50',
+                'username' => 'required|max:20',
+                'nama_perusahaan' => 'required|max:25',
+                'no_telp' => 'required|max:13',
+                'email' => 'required|max:50|email',
+                'alamat' => 'required|max:225'
+            ]);
+
+            $supplier = User::where('id_supplier', Auth::user()->id_supplier)
+                ->first();
+
+            try {
+                $supplier->update([
+                    'nama' => $request->nama,
+                    'username' => $request->username,
+                    'nama_perusahaan' => $request->nama_perusahaan,
+                    'no_telp' => $request->no_telp,
+                    'email' => $request->email,
+                    'alamat' => $request->alamat,
+                    $request->except(['_token'])
+                ]);
+
+                return redirect('/supplier/profile')
+                    ->with('status',[
+                        'type' => 'success',
+                        'message' => 'Data Successfully Updated'
+                    ]);
+
+            } catch (\Throwable $th) {
+                return redirect('/supplier/profile')
+                    ->with('status',[
+                        'type' => 'danger',
+                        'message' => 'Error Update Data'
+                    ]);
+            }
+
+        } else {
+            Auth::logout();
+            return redirect('/')->with('status',[
+                'type' => 'danger',
+                'message' => 'User do not have access'
+            ]);
         }
     }
 }
