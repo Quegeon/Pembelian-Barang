@@ -294,7 +294,7 @@ class CustomerController extends Controller
 
     public function index_buy ()
     {
-        if ( Auth::user()->level === 'admin' || Auth::user()->level === 'customer' ) {
+        if (Auth::user()->level === 'customer') {
             $barang = Barang::where('stok','>',0)
                 ->get();
             
@@ -335,31 +335,6 @@ class CustomerController extends Controller
                 return view('User.Customer.show-buy', compact(['barang','petugas']));
             }
 
-        } else if (Auth::user()->level === 'admin') {
-            $barang = Barang::find($id);
-            $customer = User::where('level','customer')
-                ->get();
-            $petugas = User::where('level','admin')
-                ->orWhere('level','petugas')
-                ->get();
-
-            if ($barang === null) {
-                return redirect('/customer/index-bayar')
-                    ->with('status',[
-                        'type' => 'danger',
-                        'message' => 'Invalid Target Data'
-                    ]);
-    
-            } else if ($petugas->first() === null) {
-                return redirect('/customer/index-buy')
-                    ->with('status',[
-                        'type' => 'danger',
-                        'message' => 'Reference Data is Empty'
-                    ]);
-    
-            } else {
-                return view('User.Customer.show-buy', compact(['barang','customer','petugas']));
-            }
         } else {
             Auth::logout();
             return redirect('/')->with('status',[

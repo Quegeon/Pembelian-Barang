@@ -62,7 +62,7 @@
                       <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $sb->nama_barang }}</td>
-                        <td>{{ $sb->harga }}</td>
+                        <td>Rp.{{ number_format($sb->harga,2,',','.') }}</td>
                         <td>{{ $sb->stok }}</td>
                       </tr>
                   @endforeach

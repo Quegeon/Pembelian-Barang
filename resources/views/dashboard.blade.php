@@ -118,9 +118,9 @@
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $h->id_customer }} | {{ $h->Customer->nama }}</td>
                         <td>{{ $h->Barang->nama_barang }} | {{ $h->Barang->Supplier->nama_perusahaan }}</td>
-                        <td>{{ $h->Barang->harga }}</td>
+                        <td>Rp.{{ number_format($h->Barang->harga,2,',','.') }}</td>
                         <td>{{ $h->kuantitas }}</td>
-                        <td>{{ $h->total_harga }}</td>
+                        <td>Rp.{{ number_format($h->total_harga,2,',','.') }}</td>
                         <td>{{ $h->tanggal_bayar }}</td>
                         <td>{{ $h->Petugas->nama }}</td>
                         <td>{{ $h->catatan }}</td>
